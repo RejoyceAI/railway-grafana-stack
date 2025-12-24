@@ -1,0 +1,491 @@
+# Grafana Unified Alerting Rules for Joyce AI Service
+# Phase 3: Logging Integration & Dashboards (RP-104)
+#
+# Alert Rules:
+# 1. Error rate > 5% for 5 minutes → Critical
+# 2. P95 latency > 10s for 5 minutes → Warning
+# 3. LLM timeout rate > 20% → Warning
+# 4. Auth failures spike (>10 in 5 min) → Warning
+# 5. Service health check failing → Critical
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: Joyce Service Alerts
+    folder: Joyce
+    interval: 1m
+    rules:
+      # Alert 1: High Error Rate (Critical)
+      - uid: joyce-high-error-rate
+        title: Joyce High Error Rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_errors_total[5m])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.05
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+              expression: "$A / ($B > 0 ? $B : 1)"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: Error rate exceeds 5% threshold
+          description: |
+            Joyce AI Service error rate is {{ printf "%.2f" $values.C.Value }}% over the last 5 minutes.
+            This may indicate a systemic issue affecting user requests.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#high-error-rate
+        labels:
+          severity: critical
+          service: joyce-svc
+          alert_type: error_rate
+
+      # Alert 2: High P95 Latency (Warning)
+      - uid: joyce-high-latency
+        title: Joyce High P95 Latency
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: histogram_quantile(0.95, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le)) > 10000
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: P95 latency exceeds 10 seconds
+          description: |
+            Joyce AI Service P95 response time is {{ printf "%.2f" $values.A.Value }}ms.
+            Users may experience degraded performance.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#high-latency
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: latency
+
+      # Alert 3: LLM Timeout Rate (Warning)
+      - uid: joyce-llm-timeout-rate
+        title: Joyce LLM High Timeout Rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_llm_timeouts_total[5m])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_llm_calls_total[5m])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.20
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+              expression: "$A / ($B > 0 ? $B : 1)"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: LLM timeout rate exceeds 20%
+          description: |
+            {{ printf "%.1f" $values.C.Value }}% of LLM calls are timing out.
+            This may indicate LLM provider issues or network problems.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#llm-timeouts
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: llm_timeout
+
+      # Alert 4: Auth Failures Spike (Warning)
+      - uid: joyce-auth-failures-spike
+        title: Joyce Auth Failures Spike
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: increase(joyce_auth_failures_total[5m]) > 10
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: Spike in authentication failures
+          description: |
+            {{ printf "%.0f" $values.A.Value }} authentication failures in the last 5 minutes.
+            This may indicate an attack attempt or misconfigured clients.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#auth-failures
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: security
+
+      # Alert 5: Health Check Failing (Critical)
+      - uid: joyce-health-check-failing
+        title: Joyce Health Check Failing
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: up{job="joyce-svc"} == 0
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: Joyce service is down
+          description: |
+            Joyce AI Service is not responding to health checks.
+            Immediate investigation required.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#service-down
+        labels:
+          severity: critical
+          service: joyce-svc
+          alert_type: availability
+
+      # Phase 4: Cost & SLO Alerts
+      
+      # Alert 6: LLM Cost Budget Alert (Warning)
+      - uid: joyce-llm-cost-budget
+        title: Joyce LLM Cost Budget Alert
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 86400
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: |
+                (
+                  sum(increase(joyce_llm_tokens_total{direction="input", model=~"claude.*"}[24h])) * 0.000003 +
+                  sum(increase(joyce_llm_tokens_total{direction="output", model=~"claude.*"}[24h])) * 0.000015
+                ) > 100
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: Daily LLM cost exceeds $100 budget
+          description: |
+            Joyce AI Service estimated LLM cost for the last 24 hours exceeds $100.
+            Current estimated cost: {{ printf "%.2f" $values.A.Value }}
+            Review tenant usage in LLM Cost dashboard.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#llm-cost-budget
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: cost
+
+      # Alert 7: SLO Availability Burn Rate (Critical)
+      - uid: joyce-slo-availability-burn
+        title: Joyce SLO Availability Burn Rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_errors_total[1h])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_request_duration_ms_count[1h])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 14.4
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+              expression: "($A / ($B > 0 ? $B : 1)) / 0.001 * 720"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: SLO availability burn rate is too high
+          description: |
+            The 1-hour error budget burn rate is {{ printf "%.1f" $values.C.Value }}x.
+            At this rate, the 30-day error budget (99.9% availability = 0.1% error budget) will be exhausted.
+            This is a leading indicator of SLO breach - investigate immediately.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#slo-burn-rate
+        labels:
+          severity: critical
+          service: joyce-svc
+          alert_type: slo
+
+      # Alert 8: SLO Latency Burn Rate (Warning)
+      - uid: joyce-slo-latency-burn
+        title: Joyce SLO Latency Burn Rate
+        condition: A
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 3600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: |
+                (
+                  1 - (
+                    sum(rate(joyce_request_duration_ms_bucket{le="6000"}[1h])) /
+                    sum(rate(joyce_request_duration_ms_count[1h]))
+                  )
+                ) / 0.05 * 720 > 14.4
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: SLO latency burn rate is too high
+          description: |
+            The 1-hour P95 latency error budget burn rate is too high.
+            More than 5% of requests are exceeding the 6s latency target.
+            At this rate, the 30-day latency budget will be exhausted.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#slo-burn-rate
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: slo
+
+      # Phase 4: Anomaly Detection Alerts
+      
+      # Alert 9: Request Rate Anomaly (Warning)
+      - uid: joyce-request-rate-anomaly
+        title: Joyce Request Rate Anomaly
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 86400
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: avg_over_time(sum(rate(joyce_request_duration_ms_count[5m]))[24h:5m]) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 3
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+              expression: "$A / ($B > 0 ? $B : 1)"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+        noDataState: OK
+        execErrState: Alerting
+        for: 10m
+        annotations:
+          summary: Unusual request rate detected
+          description: |
+            Current request rate is {{ printf "%.1f" $values.C.Value }}x the 24-hour average.
+            This may indicate a traffic spike, attack, or misconfigured client.
+            Investigate recent deployments or external factors.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#request-rate-anomaly
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: anomaly
+
+      # Alert 10: LLM Latency Spike (Warning)
+      - uid: joyce-llm-latency-spike
+        title: Joyce LLM Latency Spike
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: histogram_quantile(0.95, sum(rate(joyce_llm_duration_seconds_bucket[5m])) by (le)) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 86400
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: avg_over_time(histogram_quantile(0.95, sum(rate(joyce_llm_duration_seconds_bucket[5m])) by (le))[24h:5m]) or vector(0)
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 2
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+              expression: "$A / ($B > 0 ? $B : 1)"
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: math
+        noDataState: OK
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          summary: LLM latency significantly higher than baseline
+          description: |
+            LLM P95 latency is {{ printf "%.1f" $values.C.Value }}x the 24-hour average.
+            This may indicate LLM provider degradation or prompt complexity issues.
+            Check LLM provider status page.
+          runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#llm-latency-spike
+        labels:
+          severity: warning
+          service: joyce-svc
+          alert_type: anomaly

@@ -1,0 +1,15 @@
+# Grafana dashboard provisioning
+# Auto-loads dashboards from the dashboards directory
+
+apiVersion: 1
+
+providers:
+  - name: 'Joyce Dashboards'
+    orgId: 1
+    folder: 'Joyce'
+    folderUid: 'joyce'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
