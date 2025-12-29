@@ -25,7 +25,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_errors_total[5m])) or vector(0)
               intervalMs: 1000
@@ -35,7 +35,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
               intervalMs: 1000
@@ -87,7 +87,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: histogram_quantile(0.95, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le)) > 10000
               intervalMs: 1000
@@ -116,7 +116,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_llm_timeouts_total[5m])) or vector(0)
               intervalMs: 1000
@@ -126,7 +126,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_llm_calls_total[5m])) or vector(0)
               intervalMs: 1000
@@ -178,7 +178,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: increase(joyce_auth_failures_total[5m]) > 10
               intervalMs: 1000
@@ -207,7 +207,7 @@ groups:
             relativeTimeRange:
               from: 60
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: up{job="joyce-svc"} == 0
               intervalMs: 1000
@@ -238,7 +238,7 @@ groups:
             relativeTimeRange:
               from: 86400
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: |
                 (
@@ -272,7 +272,7 @@ groups:
             relativeTimeRange:
               from: 3600
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_errors_total[1h])) or vector(0)
               intervalMs: 1000
@@ -282,7 +282,7 @@ groups:
             relativeTimeRange:
               from: 3600
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_request_duration_ms_count[1h])) or vector(0)
               intervalMs: 1000
@@ -335,7 +335,7 @@ groups:
             relativeTimeRange:
               from: 3600
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: |
                 (
@@ -373,7 +373,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
               intervalMs: 1000
@@ -383,7 +383,7 @@ groups:
             relativeTimeRange:
               from: 86400
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: avg_over_time(sum(rate(joyce_request_duration_ms_count[5m]))[24h:5m]) or vector(0)
               intervalMs: 1000
@@ -436,7 +436,7 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: histogram_quantile(0.95, sum(rate(joyce_llm_duration_seconds_bucket[5m])) by (le)) or vector(0)
               intervalMs: 1000
@@ -446,7 +446,7 @@ groups:
             relativeTimeRange:
               from: 86400
               to: 0
-            datasourceUid: prometheus
+            datasourceUid: grafana_prometheus
             model:
               expr: avg_over_time(histogram_quantile(0.95, sum(rate(joyce_llm_duration_seconds_bucket[5m])) by (le))[24h:5m]) or vector(0)
               intervalMs: 1000

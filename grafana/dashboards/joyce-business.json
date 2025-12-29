@@ -29,7 +29,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total chat requests",
       "fieldConfig": {
         "defaults": {
@@ -49,7 +49,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total LLM calls made",
       "fieldConfig": {
         "defaults": {
@@ -69,7 +69,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Cache hit rate",
       "fieldConfig": {
         "defaults": {
@@ -89,7 +89,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Current cache size",
       "fieldConfig": {
         "defaults": {
@@ -117,7 +117,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Distribution of classified intents",
       "fieldConfig": {
         "defaults": {
@@ -141,7 +141,7 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Intent classification over time",
       "fieldConfig": {
         "defaults": {
@@ -170,7 +170,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Distribution of applied consulting frameworks",
       "fieldConfig": {
         "defaults": {
@@ -194,7 +194,7 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Framework application over time",
       "fieldConfig": {
         "defaults": {
@@ -223,7 +223,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Cache hits and misses over time",
       "fieldConfig": {
         "defaults": {
@@ -256,7 +256,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Cache hit rate over time",
       "fieldConfig": {
         "defaults": {
@@ -287,7 +287,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Graph node execution times",
       "fieldConfig": {
         "defaults": {

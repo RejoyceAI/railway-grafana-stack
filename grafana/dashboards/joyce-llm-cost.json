@@ -29,7 +29,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total estimated LLM cost based on token usage and model pricing",
       "fieldConfig": {
         "defaults": {
@@ -53,7 +53,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total input tokens processed",
       "fieldConfig": {
         "defaults": {
@@ -73,7 +73,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total output tokens generated",
       "fieldConfig": {
         "defaults": {
@@ -93,7 +93,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM timeout rate",
       "fieldConfig": {
         "defaults": {
@@ -124,7 +124,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Token usage breakdown by model and direction over time",
       "fieldConfig": {
         "defaults": {
@@ -148,7 +148,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Estimated cost per hour",
       "fieldConfig": {
         "defaults": {
@@ -181,7 +181,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM calls broken down by model and operation",
       "fieldConfig": {
         "defaults": {
@@ -202,7 +202,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM latency percentiles by model",
       "fieldConfig": {
         "defaults": {
@@ -227,7 +227,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM timeout occurrences over time",
       "fieldConfig": {
         "defaults": {
@@ -256,7 +256,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Estimated LLM cost breakdown by tenant",
       "fieldConfig": {
         "defaults": {
@@ -280,7 +280,7 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Token usage breakdown by tenant over time",
       "fieldConfig": {
         "defaults": {
@@ -303,7 +303,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Estimated hourly cost by tenant",
       "fieldConfig": {
         "defaults": {
@@ -336,7 +336,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Cost allocation summary by tenant",
       "fieldConfig": {
         "defaults": {
@@ -415,7 +415,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Comparison of models by various metrics",
       "fieldConfig": {
         "defaults": {

@@ -29,7 +29,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Error rate percentage",
       "fieldConfig": {
         "defaults": {
@@ -52,7 +52,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Total errors",
       "fieldConfig": {
         "defaults": {
@@ -72,7 +72,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Authentication failures",
       "fieldConfig": {
         "defaults": {
@@ -92,7 +92,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Rate limit hits",
       "fieldConfig": {
         "defaults": {
@@ -120,7 +120,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Errors by type over time",
       "fieldConfig": {
         "defaults": {
@@ -141,7 +141,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Auth and rate limit events over time",
       "fieldConfig": {
         "defaults": {
@@ -182,7 +182,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "Request distribution by HTTP status code",
       "fieldConfig": {
         "defaults": {
@@ -224,7 +224,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "loki", "uid": "loki" },
+      "datasource": { "type": "loki", "uid": "grafana_lokiq" },
       "description": "Recent error and warning logs with trace links",
       "gridPos": { "h": 10, "w": 24, "x": 0, "y": 24 },
       "id": 12,
@@ -255,7 +255,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "tempo", "uid": "tempo" },
+      "datasource": { "type": "tempo", "uid": "grafana_tempo" },
       "description": "Recent traces - click to view details",
       "fieldConfig": {
         "defaults": {
@@ -289,7 +289,7 @@
       "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "datasource": { "type": "tempo", "uid": "tempo" },
+        "datasource": { "type": "tempo", "uid": "grafana_tempo" },
         "limit": 20,
         "queryType": "traceqlSearch",
         "refId": "A",
@@ -310,7 +310,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM timeouts over time",
       "fieldConfig": {
         "defaults": {
@@ -331,7 +331,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus", "uid": "grafana_prometheus" },
       "description": "LLM timeout rate as percentage of calls",
       "fieldConfig": {
         "defaults": {
