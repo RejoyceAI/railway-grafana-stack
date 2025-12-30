@@ -37,7 +37,7 @@ groups:
               to: 0
             datasourceUid: grafana_prometheus
             model:
-              expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
+              expr: sum(rate(joyce_request_duration_seconds_count[5m])) or vector(0)
               intervalMs: 1000
               maxDataPoints: 43200
               refId: B
@@ -79,6 +79,7 @@ groups:
           alert_type: error_rate
 
       # Alert 2: High P95 Latency (Warning)
+      # Note: Metric is in seconds, threshold is 10s
       - uid: joyce-high-latency
         title: Joyce High P95 Latency
         condition: A
@@ -89,7 +90,7 @@ groups:
               to: 0
             datasourceUid: grafana_prometheus
             model:
-              expr: histogram_quantile(0.95, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le)) > 10000
+              expr: histogram_quantile(0.95, sum(rate(joyce_request_duration_seconds_bucket[5m])) by (le)) > 10
               intervalMs: 1000
               maxDataPoints: 43200
               refId: A
@@ -99,7 +100,7 @@ groups:
         annotations:
           summary: P95 latency exceeds 10 seconds
           description: |
-            Joyce AI Service P95 response time is {{ printf "%.2f" $values.A.Value }}ms.
+            Joyce AI Service P95 response time is {{ printf "%.2f" $values.A.Value }}s.
             Users may experience degraded performance.
           runbook_url: https://github.com/RejoyceAI/rejoyce-joyce-agent/blob/main/docs/runbooks/OBSERVABILITY.md#high-latency
         labels:
@@ -284,7 +285,7 @@ groups:
               to: 0
             datasourceUid: grafana_prometheus
             model:
-              expr: sum(rate(joyce_request_duration_ms_count[1h])) or vector(0)
+              expr: sum(rate(joyce_request_duration_seconds_count[1h])) or vector(0)
               intervalMs: 1000
               maxDataPoints: 43200
               refId: B
@@ -327,6 +328,7 @@ groups:
           alert_type: slo
 
       # Alert 8: SLO Latency Burn Rate (Warning)
+      # Note: Metric is in seconds, threshold le="6" = 6 seconds
       - uid: joyce-slo-latency-burn
         title: Joyce SLO Latency Burn Rate
         condition: A
@@ -340,8 +342,8 @@ groups:
               expr: |
                 (
                   1 - (
-                    sum(rate(joyce_request_duration_ms_bucket{le="6000"}[1h])) /
-                    sum(rate(joyce_request_duration_ms_count[1h]))
+                    sum(rate(joyce_request_duration_seconds_bucket{le="6"}[1h])) /
+                    sum(rate(joyce_request_duration_seconds_count[1h]))
                   )
                 ) / 0.05 * 720 > 14.4
               intervalMs: 1000
@@ -375,7 +377,7 @@ groups:
               to: 0
             datasourceUid: grafana_prometheus
             model:
-              expr: sum(rate(joyce_request_duration_ms_count[5m])) or vector(0)
+              expr: sum(rate(joyce_request_duration_seconds_count[5m])) or vector(0)
               intervalMs: 1000
               maxDataPoints: 43200
               refId: A
@@ -385,7 +387,7 @@ groups:
               to: 0
             datasourceUid: grafana_prometheus
             model:
-              expr: avg_over_time(sum(rate(joyce_request_duration_ms_count[5m]))[24h:5m]) or vector(0)
+              expr: avg_over_time(sum(rate(joyce_request_duration_seconds_count[5m]))[24h:5m]) or vector(0)
               intervalMs: 1000
               maxDataPoints: 43200
               refId: B
