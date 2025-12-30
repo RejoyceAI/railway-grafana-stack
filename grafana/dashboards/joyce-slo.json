@@ -45,7 +45,7 @@
       "options": { "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showThresholdLabels": true, "showThresholdMarkers": true },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "expr": "(\n  1 - (\n    sum(increase(joyce_errors_total[30d])) /\n    (sum(increase(joyce_request_duration_ms_count[30d])) > 0 or vector(1))\n  )\n) * 100",
+        "expr": "(\n  1 - (\n    (sum(increase(joyce_errors_total[30d])) or vector(0)) /\n    (sum(increase(joyce_request_duration_seconds_count[30d])) > 0 or vector(1))\n  )\n) * 100",
         "legendFormat": "Availability",
         "refId": "A"
       }],
@@ -59,10 +59,10 @@
         "defaults": {
           "color": { "mode": "thresholds" },
           "mappings": [],
-          "max": 12000,
+          "max": 12,
           "min": 0,
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 6000 }, { "color": "red", "value": 10000 }] },
-          "unit": "ms"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 6 }, { "color": "red", "value": 10 }] },
+          "unit": "s"
         },
         "overrides": []
       },
@@ -71,7 +71,7 @@
       "options": { "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showThresholdLabels": true, "showThresholdMarkers": true },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "expr": "histogram_quantile(0.95, sum(rate(joyce_request_duration_ms_bucket[30d])) by (le))",
+        "expr": "histogram_quantile(0.95, sum(rate(joyce_request_duration_seconds_bucket[30d])) by (le))",
         "legendFormat": "P95 Latency",
         "refId": "A"
       }],
@@ -97,7 +97,7 @@
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "expr": "(\n  1 - (\n    sum(increase(joyce_errors_total[30d])) /\n    (sum(increase(joyce_request_duration_ms_count[30d])) * 0.001)\n  )\n) * 100",
+        "expr": "(\n  1 - (\n    (sum(increase(joyce_errors_total[30d])) or vector(0)) /\n    (sum(increase(joyce_request_duration_seconds_count[30d])) * 0.001)\n  )\n) * 100",
         "legendFormat": "Budget Remaining",
         "refId": "A"
       }],
@@ -123,7 +123,7 @@
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "expr": "(\n  1 - (\n    (1 - sum(rate(joyce_request_duration_ms_bucket{le=\"6000\"}[30d])) / sum(rate(joyce_request_duration_ms_count[30d])))\n    / 0.05\n  )\n) * 100",
+        "expr": "(\n  1 - (\n    (1 - sum(rate(joyce_request_duration_seconds_bucket{le=\"6\"}[30d])) / (sum(rate(joyce_request_duration_seconds_count[30d])) > 0 or vector(1)))\n    / 0.05\n  )\n) * 100",
         "legendFormat": "Budget Remaining",
         "refId": "A"
       }],
@@ -157,12 +157,12 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "(\n  sum(rate(joyce_errors_total[1h])) /\n  (sum(rate(joyce_request_duration_ms_count[1h])) > 0 or vector(1))\n) / 0.001 * 720",
+          "expr": "(\n  (sum(rate(joyce_errors_total[1h])) or vector(0)) /\n  (sum(rate(joyce_request_duration_seconds_count[1h])) > 0 or vector(1))\n) / 0.001 * 720",
           "legendFormat": "1h Burn Rate",
           "refId": "A"
         },
         {
-          "expr": "(\n  sum(rate(joyce_errors_total[6h])) /\n  (sum(rate(joyce_request_duration_ms_count[6h])) > 0 or vector(1))\n) / 0.001 * 120",
+          "expr": "(\n  (sum(rate(joyce_errors_total[6h])) or vector(0)) /\n  (sum(rate(joyce_request_duration_seconds_count[6h])) > 0 or vector(1))\n) / 0.001 * 120",
           "legendFormat": "6h Burn Rate",
           "refId": "B"
         }
@@ -189,12 +189,12 @@
       "pluginVersion": "10.2.0",
       "targets": [
         {
-          "expr": "(\n  1 - (\n    sum(rate(joyce_request_duration_ms_bucket{le=\"6000\"}[1h])) /\n    (sum(rate(joyce_request_duration_ms_count[1h])) > 0 or vector(1))\n  )\n) / 0.05 * 720",
+          "expr": "(\n  1 - (\n    sum(rate(joyce_request_duration_seconds_bucket{le=\"6\"}[1h])) /\n    (sum(rate(joyce_request_duration_seconds_count[1h])) > 0 or vector(1))\n  )\n) / 0.05 * 720",
           "legendFormat": "1h Burn Rate",
           "refId": "A"
         },
         {
-          "expr": "(\n  1 - (\n    sum(rate(joyce_request_duration_ms_bucket{le=\"6000\"}[6h])) /\n    (sum(rate(joyce_request_duration_ms_count[6h])) > 0 or vector(1))\n  )\n) / 0.05 * 120",
+          "expr": "(\n  1 - (\n    sum(rate(joyce_request_duration_seconds_bucket{le=\"6\"}[6h])) /\n    (sum(rate(joyce_request_duration_seconds_count[6h])) > 0 or vector(1))\n  )\n) / 0.05 * 120",
           "legendFormat": "6h Burn Rate",
           "refId": "B"
         }
@@ -230,7 +230,7 @@
       "options": { "legend": { "calcs": ["mean", "min"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
       "pluginVersion": "10.2.0",
       "targets": [{
-        "expr": "(\n  1 - (\n    sum(rate(joyce_errors_total[1h])) /\n    (sum(rate(joyce_request_duration_ms_count[1h])) > 0 or vector(1))\n  )\n) * 100",
+        "expr": "(\n  1 - (\n    (sum(rate(joyce_errors_total[1h])) or vector(0)) /\n    (sum(rate(joyce_request_duration_seconds_count[1h])) > 0 or vector(1))\n  )\n) * 100",
         "legendFormat": "Availability",
         "refId": "A"
       }],
@@ -245,8 +245,8 @@
           "color": { "mode": "palette-classic" },
           "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 10, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "line" } },
           "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 6000 }] },
-          "unit": "ms"
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 6 }] },
+          "unit": "s"
         },
         "overrides": []
       },
@@ -255,9 +255,9 @@
       "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "none" } },
       "pluginVersion": "10.2.0",
       "targets": [
-        { "expr": "histogram_quantile(0.50, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le))", "legendFormat": "P50", "refId": "A" },
-        { "expr": "histogram_quantile(0.95, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le))", "legendFormat": "P95", "refId": "B" },
-        { "expr": "histogram_quantile(0.99, sum(rate(joyce_request_duration_ms_bucket[5m])) by (le))", "legendFormat": "P99", "refId": "C" }
+        { "expr": "histogram_quantile(0.50, sum(rate(joyce_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "P50", "refId": "A" },
+        { "expr": "histogram_quantile(0.95, sum(rate(joyce_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "P95", "refId": "B" },
+        { "expr": "histogram_quantile(0.99, sum(rate(joyce_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "P99", "refId": "C" }
       ],
       "title": "Latency SLI (Rolling 5m)",
       "type": "timeseries"
