@@ -59,7 +59,7 @@ groups:
                       - C
                   reducer:
                     type: last
-              expression: "$A / ($B > 0 ? $B : 1)"
+              expression: "$A / ($B + 0.0001)"
               intervalMs: 1000
               maxDataPoints: 43200
               refId: C
@@ -151,7 +151,7 @@ groups:
                       - C
                   reducer:
                     type: last
-              expression: "$A / ($B > 0 ? $B : 1)"
+              expression: "$A / ($B + 0.0001)"
               intervalMs: 1000
               maxDataPoints: 43200
               refId: C
@@ -307,7 +307,7 @@ groups:
                       - C
                   reducer:
                     type: last
-              expression: "($A / ($B > 0 ? $B : 1)) / 0.001 * 720"
+              expression: "($A / ($B + 0.0001)) / 0.001 * 720"
               intervalMs: 1000
               maxDataPoints: 43200
               refId: C
@@ -409,7 +409,7 @@ groups:
                       - C
                   reducer:
                     type: last
-              expression: "$A / ($B > 0 ? $B : 1)"
+              expression: "$A / ($B + 0.0001)"
               intervalMs: 1000
               maxDataPoints: 43200
               refId: C
@@ -472,7 +472,7 @@ groups:
                       - C
                   reducer:
                     type: last
-              expression: "$A / ($B > 0 ? $B : 1)"
+              expression: "$A / ($B + 0.0001)"
               intervalMs: 1000
               maxDataPoints: 43200
               refId: C
