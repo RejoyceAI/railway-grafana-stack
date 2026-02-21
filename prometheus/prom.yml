@@ -12,7 +12,7 @@ scrape_configs:
   # Joyce AI Agent Service
   - job_name: 'joyce-svc'
     static_configs:
-      - targets: ['rejoyce-joyce-agent.railway.internal:8000']
+      - targets: ['rejoyce-joyce-agent.railway.internal:8080']
     metrics_path: '/metrics'
     scrape_interval: 15s
     scrape_timeout: 10s
